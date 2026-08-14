@@ -1,0 +1,14 @@
+{% extends 'layouts/page.html' %}
+
+{% block content %}
+
+<img src="{{ profile.avatar }}" class="w-36 h-36 rounded-full object-cover mb-4 mx-auto"  />
+<div class="text-center">
+    <h1>{{ profile.name }}</h1>
+    <div class="text-gray-400 mb-2 -mt-3">@{{ profile.username }}</div>
+    {% if profile.info %}
+    <div class="mt-8">{{ profile.info|linebreaksbr }}</div>
+    {% endif %}  
+</div>
+
+{% endblock %}

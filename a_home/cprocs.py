@@ -2,5 +2,5 @@ from django.conf import settings
 
 def project_title(request):
     return {
-        'Chat Application': settings.PROJECT_TITLE
+        'PROJECT_TITLE': settings.PROJECT_TITLE
     }
