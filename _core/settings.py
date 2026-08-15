@@ -30,6 +30,7 @@ CSRF_TRUSTED_ORIGINS = ['https://*']
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',                
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -37,15 +38,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_cleanup.apps.CleanupConfig',
+    'channels',
 
     # My apps
     'a_home',
     'a_users',
+    'a_chat', 
     
-    # Third party
+     # Third party
     'allauth',
-    'allauth.account',
     'allauth.socialaccount',
+    'allauth.account',
     'django_browser_reload',
     'django_htmx',
 ]
