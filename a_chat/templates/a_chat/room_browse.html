@@ -1,0 +1,15 @@
+{% extends 'layouts/page.html' %}
+
+{% block content %}
+<h1>Rooms</h1>
+<ul class="hoverlist">
+    {% for room in rooms %}
+    <li class="flex justify-between items-center">
+        <span>{{ room.name }}</span>
+        <a href="{% url 'room-join' room.pk %}" class="button">Join</a>
+    </li>
+    {% empty %}
+    <p>No rooms yet. <a href="{% url 'room-create' %}">Create one</a>.</p>
+    {% endfor %}
+</ul>
+{% endblock %}
