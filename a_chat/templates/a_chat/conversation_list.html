@@ -1,0 +1,29 @@
+{% extends 'layouts/page.html' %}
+
+{% block content %}
+<h1>Chats</h1>
+
+<div class="mb-6 flex gap-2">
+    <a href="{% url 'room-browse' %}" class="button">Browse Rooms</a>
+    <a href="{% url 'room-create' %}" class="button">New Room</a>
+</div>
+
+<ul class="hoverlist">
+    {% for convo in conversations %}
+    <li>
+        <a href="{% url 'conversation-detail' convo.pk %}">
+            {% if convo.type == 'room' %}
+                {{ convo.name }}
+            {% else %}
+                {% for member in convo.members.all %}{% if member != request.user %}@{{ member.username }}{% endif %}{% endfor %}
+            {% endif %}
+            {% if convo.last_message %}
+                <span class="text-gray-400 ml-2">{{ convo.last_message.content|truncatechars:40 }}</span>
+            {% endif %}
+        </a>
+    </li>
+    {% empty %}
+    <p>No conversations yet.</p>
+    {% endfor %}
+</ul>
+{% endblock %}

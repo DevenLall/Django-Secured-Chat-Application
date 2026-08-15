@@ -2,13 +2,14 @@
     <div>
         <a class="flex items-center gap-2" href="/">
             <img class="h-6" src="/static/images/logo.svg" alt="Logo"/>
-            <span class="text-lg font-bold">{{ Chat Application }}</span>
+            <span class="text-lg font-bold">{{ PROJECT_TITLE }}</span>
         </a>
     </div>
     <nav class="block bg-gray-800 relative">
         <ul class="navitems flex items-center justify-center h-full">
             {% if request.user.is_authenticated %}
             <li><a href="/">Home</a></li>
+            <li><a href="{% url 'conversation-list' %}">Chats</a></li>
             <li x-data="{ dropdownOpen: false }" class="relative">
                 <a @click="dropdownOpen = !dropdownOpen" @click.away="dropdownOpen = false" class="cursor-pointer select-none">
                     <img class="h-8 w-8 rounded-full object-cover" src="{{ user.avatar }}"/>

@@ -1,0 +1,24 @@
+{% extends 'layouts/page.html' %}
+
+{% block content %}
+<h1>
+    {% if conversation.type == 'room' %}
+        {{ conversation.name }}
+    {% else %}
+        {% for member in conversation.members.all %}{% if member != request.user %}@{{ member.username }}{% endif %}{% endfor %}
+    {% endif %}
+</h1>
+
+<div id="chat-log" class="border rounded-lg p-4 mb-4 h-96 overflow-y-auto">
+    {% for message in chat_messages %}
+    <div class="mb-2">
+        <strong>{{ message.sender.username }}:</strong> {{ message.content }}
+        <span class="text-gray-400 text-sm">{{ message.timestamp|time:"H:i" }}</span>
+    </div>
+    {% empty %}
+    <p class="text-gray-400">No messages yet — say hi!</p>
+    {% endfor %}
+</div>
+
+<p class="text-gray-400">Live sending gets added in the next step — this page currently only shows history.</p>
+{% endblock %}
