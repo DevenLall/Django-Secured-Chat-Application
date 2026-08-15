@@ -57,7 +57,7 @@ def conversation_detail_view(request, pk):
 
 @login_required
 def room_create_view(request):
-    # Create a room,. the person who makes the group auto joins as the first member
+    # Create a room, the person who makes the group auto joins as the first member
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
         if name:
@@ -77,7 +77,17 @@ def room_browse_view(request):
 
 @login_required
 def room_join_view(request, pk):
-    # Rooms are open-join for now — no invite system yet.
+    # Rooms are open-join for now, no invite system yet.
     conversation = get_object_or_404(Conversation, pk=pk, type=Conversation.Type.ROOM)
     ConversationMember.objects.get_or_create(conversation=conversation, user=request.user)
     return redirect('conversation-detail', pk=conversation.pk)
+
+
+@login_required
+def user_search_view(request):
+    # Search users by username to start a DM with them.
+    query = request.GET.get('q', '').strip()
+    results = []
+    if query:
+        results = User.objects.filter(username__icontains=query).exclude(pk=request.user.pk)[:20]
+    return render(request, 'a_chat/user_search.html', {'query': query, 'results': results})

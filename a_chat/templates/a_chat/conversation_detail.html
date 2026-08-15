@@ -16,9 +16,60 @@
         <span class="text-gray-400 text-sm">{{ message.timestamp|time:"H:i" }}</span>
     </div>
     {% empty %}
-    <p class="text-gray-400">No messages yet — say hi!</p>
+    <p class="text-gray-400" id="empty-state">No messages yet — say hi!</p>
     {% endfor %}
 </div>
 
-<p class="text-gray-400">Live sending gets added in the next step — this page currently only shows history.</p>
+<form id="chat-form" class="flex gap-2">
+    {% csrf_token %}
+    <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off" class="flex-1">
+    <button type="submit">Send</button>
+</form>
+
+<script>
+    // Django sendfs the primary key, need it in js for WebSocket
+    const conversationId = {{ conversation.pk }};
+
+    const wsScheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const chatSocket = new WebSocket(
+        `${wsScheme}://${window.location.host}/ws/chat/${conversationId}/`
+    );
+
+    const chatLog = document.getElementById('chat-log');
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+
+    function appendMessage(sender, message, timestamp) {
+        // Remove the No messages yet when the first message arrives.
+        const emptyState = document.getElementById('empty-state');
+        if (emptyState) emptyState.remove();
+
+        const div = document.createElement('div');
+        div.className = 'mb-2';
+        div.innerHTML = `<strong>${sender}:</strong> ${message} <span class="text-gray-400 text-sm">${timestamp}</span>`;
+        chatLog.appendChild(div);
+        chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        appendMessage(data.sender, data.message, data.timestamp);
+    };
+
+    chatSocket.onclose = function () {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    chatForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        chatSocket.send(JSON.stringify({ 'message': message }));
+        chatInput.value = '';
+    });
+
+    // Auto-scroll to the bottom on page load so you see the latest messages first.
+    chatLog.scrollTop = chatLog.scrollHeight;
+</script>
 {% endblock %}
